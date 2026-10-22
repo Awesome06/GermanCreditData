@@ -1,4 +1,4 @@
-# German Credit Data: Statistical Stress-Testing and Algorithmic Fairness Audit
+# German Credit Data
 
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Framework: scikit--learn](https://img.shields.io/badge/framework-scikit--learn-orange.svg)](https://scikit-learn.org/)

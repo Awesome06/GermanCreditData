@@ -14,7 +14,7 @@ def create_audit_notebook() -> nbf.NotebookNode:
     # 1. Header
     cells.append(
         nbf.v4.new_markdown_cell("""# CSET485 – AI and Society: Assignment #1
-## Statistical Stress-Testing and Algorithmic Fairness Audit: UCI German Credit Data
+## German Credit Data
 
 **Author:** Roll Number ending in 343  
 **Deterministic Random Seed:** `343`  

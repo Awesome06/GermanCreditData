@@ -14,6 +14,7 @@
 - **Strict Zero-Legacy-Skills Invariant:** Antigravity IDE discovers workspace skills exclusively from `.agents/skills/` (plural). The legacy directory `.agent/skills/` (singular) is permanently DEPRECATED and PROHIBITED. Agents and scripts MUST NEVER create, link, or reference `.agent/skills/`. All active domain skills and local customizations MUST reside strictly in `.agents/skills/`.
 - Do not add or remove third-party dependencies without explicit user confirmation.
 - Keep the context window lean: do not load files into context unless actively modifying them.
+- **Chat Output Readability Invariant:** In all assistant chat responses, strictly avoid raw LaTeX math syntax (`$\beta$`, `$\to$`, `$\mathbf{...}$`). Use plain-text ASCII equivalents (`beta = -0.0194 -> Male cohort beta = +0.0304`) and formatted tables to ensure instant visual readability in the chat UI. Reserve LaTeX math exclusively for Jupyter Notebook cells and rendered PDF reports.
 
 ## Data Science & Econometric Auditing Invariants
 

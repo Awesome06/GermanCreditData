@@ -2,9 +2,7 @@
 
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Framework: scikit--learn](https://img.shields.io/badge/framework-scikit--learn-orange.svg)](https://scikit-learn.org/)
-[![Econometrics: statsmodels](https://img.shields.io/badge/econometrics-statsmodels-blueviolet.svg)](https://www.statsmodels.org/)
 [![Reproducibility: Seed 343](https://img.shields.io/badge/reproducibility-seed%20343-brightgreen.svg)]()
-[![Platform: Linux | Windows | macOS](https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An econometric stress-testing and algorithmic fairness auditing framework conducted on the UCI Statlog German Credit dataset for **CSET485: AI and Society (Assignment #1)**. This study empirically evaluates how predictive credit approval models, ostensibly exhibiting sound aggregate performance metrics, conceal structural subgroup disparities, omitted-variable sensitivities, high-confidence adversarial failure modes, and unavoidable trade-offs among mutually incompatible fairness definitions.

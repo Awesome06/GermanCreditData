@@ -1,0 +1,14 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Enforce LF on all shell scripts across checkouts
+*.sh text eol=lf
+
+# PowerShell scripts can use CRLF or LF safely
+*.ps1 text eol=crlf
+
+# Markdown and configurations
+*.md text
+*.json text
+*.yml text
+*.yaml text

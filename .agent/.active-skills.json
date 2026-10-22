@@ -3,6 +3,7 @@
     "initialized_at":  "2026-10-17T04:16:16Z",
     "stack":  "auto",
     "active_skills":  [
-                          "arch/readme-craft"
+                          "arch/readme-craft",
+                          "langs/python-ml"
                       ]
 }

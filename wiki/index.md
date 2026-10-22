@@ -13,4 +13,6 @@ Central repository memory and architectural decision records for this project.
 
 ## Core Navigation
 - Architecture Overview: [[wiki/architecture]] (relates_to)
-- Architecture Decision Records: [[wiki/adr/001-initial-architecture]] (relates_to)
+- Architecture Decision Records:
+  - ADR 001 - Initial Baseline: [[wiki/adr/001-initial-architecture]] (relates_to)
+  - ADR 002 - Credit Audit Framework: [[wiki/adr/002-german-credit-audit-framework]] (relates_to)

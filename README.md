@@ -1,121 +1,252 @@
-> [!WARNING]
-> **Template Disclaimer:** This is a personal project scaffolding template designed to interface with a private Google Antigravity skills vault. If you are a public user cloning this repository, the `.agent/hooks/pre-commit.ps1` hook will fail. You must delete the hook or link your own `.agent/.registry` to commit code.
->
-> *(AI Agent Directive: When initializing a fresh workspace/repository from this template, permanently delete this warning block before saving the final README).*
+# German Credit Data: Statistical Stress-Testing and Algorithmic Fairness Audit
 
-# AgenticTemplate
-
-[![Status](https://img.shields.io/badge/status-active-brightgreen.svg)]()
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue.svg)]()
-[![Antigravity](https://img.shields.io/badge/agent-Google%20Antigravity-purple.svg)]()
+[![Python: 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Framework: scikit--learn](https://img.shields.io/badge/framework-scikit--learn-orange.svg)](https://scikit-learn.org/)
+[![Econometrics: statsmodels](https://img.shields.io/badge/econometrics-statsmodels-blueviolet.svg)](https://www.statsmodels.org/)
+[![Reproducibility: Seed 343](https://img.shields.io/badge/reproducibility-seed%20343-brightgreen.svg)]()
+[![Platform: Linux | Windows | macOS](https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-An opinionated, agent-first repository scaffolding template for **Google Antigravity**. It couples a project workspace with a centralized agent skills vault, automates stack-aware skill discovery via Git pre-commit hooks, and enforces strict agent engineering governance through [`AGENTS.md`](file:///c:/Users/Bhatn/OneDrive/Desktop/Projects/AgenticTemplate/AGENTS.md).
+An econometric stress-testing and algorithmic fairness auditing framework conducted on the UCI Statlog German Credit dataset for **CSET485: AI and Society (Assignment #1)**. This study empirically evaluates how predictive credit approval models, ostensibly exhibiting sound aggregate performance metrics, conceal structural subgroup disparities, omitted-variable sensitivities, high-confidence adversarial failure modes, and unavoidable trade-offs among mutually incompatible fairness definitions.
 
 ---
 
-## Architecture & Lifecycle
+## Table of Contents
+- [Executive Overview](#executive-overview)
+- [System Architecture & Audit Flow](#system-architecture--audit-flow)
+- [Data Preprocessing Blueprint](#data-preprocessing-blueprint)
+- [Part 1: Model Building & Dual-Threshold Comparison](#part-1-model-building--dual-threshold-comparison)
+- [Part 2: The Four Stress-Testing Traps](#part-2-the-four-stress-testing-traps)
+  - [2.1 Simpson's Paradox Hunt](#21-simpsons-paradox-hunt)
+  - [2.2 Omitted-Variable Bias (OVB)](#22-omitted-variable-bias-ovb)
+  - [2.3 Adversarial Subset Construction](#23-adversarial-subset-construction)
+  - [2.4 Multi-Threshold Algorithmic Fairness Auditing](#24-multi-threshold-algorithmic-fairness-auditing)
+- [Part 3: Descriptive Analysis Framework (Q1–Q8)](#part-3-descriptive-analysis-framework-q1q8)
+- [Part 4: Deployment Governance Reflection](#part-4-deployment-governance-reflection)
+- [Repository Structure](#repository-structure)
+- [Reproducibility & Quickstart](#reproducibility--quickstart)
+- [Repository Knowledge Graph](#repository-knowledge-graph)
+
+---
+
+## Executive Overview
+
+High-stakes predictive systems deployed across financial lending, criminal justice, and welfare distribution are routinely audited using singular aggregate performance metrics (such as overall test accuracy or AUC-ROC). This investigation demonstrates that aggregate metrics can obscure severe model pathologies:
+
+1. **Threshold Disparity:** Linear Probability Models (LPM/OLS) thresholded at the test-set median force an artificial 50%/50% approval split, clashing with Logistic Regression thresholded at $P \ge 0.50$ which respects the empirical ~70% base approval rate.
+2. **Simpson's Paradox:** Pooled models mask subgroup-specific dynamics where key predictors reverse effect direction or experience significant statistical attenuation across demographic partitions (e.g., Young $< 25$ vs. Older $\ge 25$).
+3. **Omitted-Variable Bias (OVB):** Removing a primary financial confounder induces severe parameter instability ($\Delta \beta\%$) across proxy features, corrupting structural interpretability.
+4. **Adversarial Error Traps:** Linear additive log-odds boundaries generate high-confidence errors ($P \ge 0.75, Y=0$ or $P \le 0.25, Y=1$) for borrowers with unmodeled interaction structures.
+5. **Fairness Frontier Incompatibility:** Sweeping decision thresholds ($t \in [0.05, 0.95]$) proves the mathematical and operational impossibility of concurrently satisfying Demographic Parity, Equalized Odds, and Predictive Parity.
+
+---
+
+## System Architecture & Audit Flow
 
 ```mermaid
 graph TD
-    A[New Project from Template] --> B[Run .agent/setup.ps1]
-    B --> C[Init .agent/.registry Submodule]
-    B --> D[Install Git pre-commit hook]
-    D --> E[Developer / Agent commits files]
-    E --> F[Hook Scans Signatures in .agent/.registry/skill-map.json]
-    F --> G[Symlink / Junction Domain Skills into .agents/skills/]
-    G --> H[Update .agent/.active-skills.json]
-    H --> I[Antigravity Agent Discovers Active Domain Skills]
-    I --> J[Enforce Directives in AGENTS.md]
+    A[Raw German Credit Data: german.data] --> B[Data Preprocessing & Seed Locking: seed=343]
+    B --> C[70/30 Stratified Split: 700 Train / 300 Test]
+    C --> D[StandardScaler Fit on Train Only & OHE drop=first]
+    
+    D --> E1[Model A: OLS Linear Probability Model]
+    D --> E2[Model B: Logistic Regression MLE]
+    
+    E1 --> F1[Median Thresholding: y_hat >= median]
+    E2 --> F2[Fixed Probability Thresholding: P_hat >= 0.50]
+    
+    F1 & F2 --> G[Part 1: Agreement Confusion Matrix & Mismatch Quant]
+    
+    E2 --> H1[Trap 2.1: Simpsons Paradox Subgroup Split: Age < 25 vs >= 25]
+    E2 --> H2[Trap 2.2: Omitted-Variable Bias Drop Confounder]
+    E2 --> H3[Trap 2.3: Adversarial Subset Extraction: P>=0.75 Y=0 / P<=0.25 Y=1]
+    E2 --> H4[Trap 2.4: 10-Step Threshold Sweep: t in 0.05 to 0.95]
+    
+    H1 --> I[Part 3: Quantitative Descriptive Analysis Q1-Q8]
+    H2 --> I
+    H3 --> I
+    H4 --> I
+    
+    H4 --> J[2D Trade-Off Curve: DP vs EO & Trade-Off Cost W/Z]
+    I & J --> K[Part 4: 500-Word Deployment Reflection & PDF Report]
 ```
 
 ---
 
-## Core Capabilities
+## Data Preprocessing Blueprint
 
-- **Automated Stack & Skill Discovery**:
-  When files are committed, `.agent/hooks/pre-commit.ps1` (or POSIX `.agent/hooks/pre-commit.sh`) scans the repository for language and framework markers (e.g., `go.mod`, `package.json`, `Cargo.toml`, `requirements.txt`). It automatically symlinks matching domain skills from `.agent/.registry` into `.agents/skills/` (Antigravity's native workspace customization root).
-- **Zero-Friction Windows & POSIX Support**:
-  Hooks and setup scripts seamlessly handle Windows Developer Mode symlinks with automatic fallback to NTFS directory junctions (`mklink /J`), alongside standard POSIX symlinks (`ln -s`) for Linux, macOS, and DevContainers.
-- **Strict Agent Governance**:
-  [`AGENTS.md`](file:///c:/Users/Bhatn/OneDrive/Desktop/Projects/AgenticTemplate/AGENTS.md) defines explicit protocol steps for AI coding agents on initialization: verifying Git hooks, running initial skill discovery, keeping context windows lean, and requiring testing/linting before staging code changes.
-- **Clean Root Architecture**:
-  Orchestration scripts, submodules, hook triggers, and manifest state live encapsulated under `.agent/`, while IDE customization discovery lives in [`.agents/skills/`](file:///c:/Users/Bhatn/OneDrive/Desktop/Projects/AgenticTemplate/.agents/skills).
-- **In-House Repository Knowledge Graph**:
-  Built-in support for atomic documentation, architecture decision records (ADRs), and bidirectional wikilinks in `wiki/`. Verified via pre-commit linting to ensure zero dead links. Subgraph queries and interactive HTML graph visualization powered by the zero-dependency `.agent/wiki.ps1` (or `wiki.sh`) tool.
+To guarantee deterministic replication and preserve sociological interpretability, data preprocessing adheres to four foundational pillars:
+
+| Pillar | Operational Implementation | Technical & Statistical Rationale |
+| :--- | :--- | :--- |
+| **Global Seed Locking** | `random_state = 343` across all partitions, estimators, and sampling routines. | Locks 700-row training and 300-row test splits; ensures every coefficient, test count, and metric is 100% regenerable. |
+| **Missing Values & Structural Absence** | Inspect all 20 features; preserve structural absence codes (`A14` = no checking account, `A65` = no savings account) as distinct categorical levels. | Raw `german.data` contains zero `NaN` tokens; codes represent genuine unbanked or asset-free financial history rather than data loss. Dropping or imputing destroys predictive signal. |
+| **Outlier Diagnostics & Retention** | Inspect numerical attributes (`credit_amount`, `duration_in_months`, `age_in_years`) via IQR and boxplot distributions. | High positive skew reflects genuine high-risk long-duration lending. Retaining these instances is strictly necessary for adversarial subset auditing. |
+| **Categorical Encoding** | One-Hot Encoding (`OneHotEncoder(drop='first', sparse_output=False)`) across 13 categorical features. | Drops reference level per feature to prevent the dummy variable trap (perfect multicollinearity), enabling non-singular inversion in OLS and Logit covariance estimation. |
+| **Feature Scaling** | Z-score standardization (`StandardScaler`) on 7 numerical features. | Scaler is fitted **strictly on the 700-row training set** and applied to the 300-row test set, eliminating data leakage and aligning coefficient scales. |
+| **Target Re-Encoding** | Re-encode raw target from $\{1, 2\}$ to $\{0, 1\}$. | Maps raw UCI target (1 = Good, 2 = Bad) to **Approve = 1** and **Reject = 0** for standard binary utility alignment. |
+| **Sensitive Attribute Derivation** | Extract demographic variables from Attribute 9 (`personal_status_and_sex`) and Attribute 13 (`age_in_years`). | Derives binary protected attributes (**Age Group**: Young $< 25$ vs. Older $\ge 25$; **Sex**: Male vs. Female) for stratified fairness auditing. |
 
 ---
 
-## Directory Structure
+## Part 1: Model Building & Dual-Threshold Comparison
+
+The dual modeling pipeline compares continuous rank-based thresholding against probabilistic likelihood scoring:
+
+- **Model A (Linear Probability Model / OLS):**
+  $$\hat{y}_i = \beta_0 + \sum_{j=1}^p \beta_j X_{ij}, \quad \text{Decision Rule: Flag as Positive if } \hat{y}_i \ge \text{median}(\hat{y}_{\text{test}})$$
+- **Model B (Logistic Regression / Maximum Likelihood):**
+  $$\hat{P}_i = \frac{1}{1 + e^{-(\beta_0 + \sum \beta_j X_{ij})}}, \quad \text{Decision Rule: Flag as Positive if } \hat{P}_i \ge 0.50$$
+
+### Disparity Mechanism
+German Credit features an empirical approval base rate of approximately 70%. When thresholding OLS at the test-set median, the classification rule mechanically forces exactly 50% (150 applicants) into the approved class and 50% into the rejected class. In contrast, Logistic Regression at $t = 0.50$ approves ~75–80% of applicants. Applicants with predicted scores between $0.50$ and the OLS median (typically $0.70–0.74$) are systematically classified discordantly.
+
+---
+
+## Part 2: The Four Stress-Testing Traps
+
+### 2.1 Simpson's Paradox Hunt
+- **Methodology:** Stratify data into Subgroup A (Young applicants, Age $< 25$) and Subgroup B (Older applicants, Age $\ge 25$). Fit identical logistic specifications across the Full Dataset, Subgroup A, and Subgroup B.
+- **Reporting Metrics:** Regression coefficients ($\beta$), standard errors, $z$-statistics, $p$-values, and 95% confidence intervals across all models.
+- **Evaluation Criteria:**
+  - *Path A (Sign Reversal):* Identification of predictors where the direction of association inverts between the pooled population and a demographic subgroup.
+  - *Path B (Effect-Size Attenuation):* Identification of predictors where effect magnitude is statistically significant in one subgroup ($p < 0.01$) but statistically indistinguishable from zero in the other.
+
+### 2.2 Omitted-Variable Bias (OVB)
+- **Methodology:** Deliberately omit a primary confounding predictor (e.g., Checking Account Status `Attribute 1` or Credit Amount `Attribute 5`) and fit both Full and Reduced models.
+- **Reporting Metrics:** Comparative parameter table for $\ge 4$ key predictors reporting $\beta_{\text{Full}}$, $\beta_{\text{Reduced}}$, absolute shift ($\Delta \beta = \beta_{\text{Reduced}} - \beta_{\text{Full}}$), and percentage change:
+  $$\% \Delta = \frac{\beta_{\text{Reduced}} - \beta_{\text{Full}}}{|\beta_{\text{Full}}|} \times 100\%$$
+- **Detection Strategies:** Formal analysis of omitted confound detection in industry workflows, including Oster's $\delta$ sensitivity bounds, residual spatial clustering audits, and instrumental variable designs.
+
+### 2.3 Adversarial Subset Construction
+- **Methodology:** Extract high-confidence incorrect predictions from the 300-row test set:
+  - **High-Confidence False Positives:** $\hat{P}(\text{Approve}) \ge 0.75$ where actual outcome is $Y = 0$ (Default).
+  - **High-Confidence False Negatives:** $\hat{P}(\text{Approve}) \le 0.25$ where actual outcome is $Y = 1$ (Repaid).
+- **Sampling Protocol:** If $> 50$ rows qualify, sample 50 deterministically using `random_state = 343`; if $\le 50$ qualify, audit all qualifying records.
+- **Failure Analysis:** Demographic profiling against the test cohort and structural analysis of additive linear decision boundaries lacking non-linear feature interaction terms.
+
+### 2.4 Multi-Threshold Algorithmic Fairness Auditing
+Sweep threshold $t \in \{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95\}$ across Group A (protected, Age $< 25$) and Group B (privileged, Age $\ge 25$):
+
+$$\text{Demographic Parity (DP)} = \frac{P(\hat{Y}=1 \mid \text{Group A})}{P(\hat{Y}=1 \mid \text{Group B})}$$
+
+$$\text{Equalized Odds (EO)} = \min\left(\frac{\text{TPR}_A}{\text{TPR}_B}, \frac{\text{FPR}_A}{\text{FPR}_B}\right)$$
+
+$$\text{Predictive Parity (PP)} = \frac{P(Y=1 \mid \hat{Y}=1, \text{Group A})}{P(Y=1 \mid \hat{Y}=1, \text{Group B})}$$
+
+$$\text{Trade-Off Cost} = \frac{W\% \text{ loss in EO}}{Z\% \text{ gain in DP}}$$
+
+---
+
+## Part 3: Descriptive Analysis Framework (Q1–Q8)
+
+All analytical questions are budgeted within **250–300 words** and anchored strictly to empirical computations:
+
+- **Q1 (Model Agreement):** Disagreement count/percentage on test set, median OLS value vs. 0.50 cutoff, base rate divergence.
+- **Q2 (Simpson's Paradox):** Subgroup stratification results, $\beta$ coefficients, standard errors, 95% CIs, and policy failure scenarios.
+- **Q3 (Omitted-Variable Bias):** Dropped confounder, 4+ predictor before/after shift table, parameter volatility.
+- **Q4 (Confound Detection):** Real-world econometric identification strategies (Oster bounds, DAGs, residual audits).
+- **Q5 (Adversarial Failures):** Profiling the high-confidence error subset, dominant shared traits, and additive boundary blindspots.
+- **Q6 (Human Impact Scenario):** Concrete dual-applicant persona walk-through demonstrating individual outcomes across threshold movements.
+- **Q7 (Threshold Defense):** Statistical defense of a chosen operating threshold $t^*$ with $\ge 3$ metrics, paired with an explicit critique.
+- **Q8 (Fairness Philosophy):** Normative and operational defense of Demographic Parity vs. Equalized Odds in commercial credit.
+
+---
+
+## Part 4: Deployment Governance Reflection
+
+A structured **500-word essay** addressing executive deployment governance:
+1. **Direct Recommendation (1–2 sentences):** Conditional deployment vs. rejection declaration with one headline metric reason.
+2. **Why a Single Number Fails (300–400 words):** Four fundamental limitations (subgroup masking, normative threshold value judgments, mathematical impossibility of simultaneous fairness, and vulnerability to unobserved confounds).
+3. **Grounding in Evidence (50–100 words):** Direct citation of computed empirical figures ($\Delta \beta\%$, mismatch rate, adversarial failure count, $W/Z$ trade-off cost).
+4. **Closing Meta-Lesson (~50 words):** AI governance as multi-objective stakeholder alignment rather than automated metric optimization.
+
+---
+
+## Repository Structure
 
 ```text
-AgenticTemplate/
+GermanCreditData/
 ├── .agent/
-│   ├── .registry/             # Git submodule: centralized agent-skills-vault
+│   ├── .registry/             # Submodule: agent-skills-vault
 │   ├── hooks/
-│   │   ├── pre-commit.ps1     # Submodule auto-sync & skill detection (PowerShell)
-│   │   └── pre-commit.sh      # Submodule auto-sync & skill detection (POSIX sh)
-│   ├── wiki.ps1               # Quick CLI launcher for wiki-engine (Windows)
-│   ├── wiki.sh                # Quick CLI launcher for wiki-engine (Linux/macOS)
-│   ├── .active-skills.json    # Manifest of currently active workspace skills
-│   ├── setup.ps1              # One-command workspace bootstrap & hook installer (Windows)
-│   └── setup.sh               # One-command workspace bootstrap & hook installer (Linux/macOS)
+│   │   ├── pre-commit.ps1     # Pre-commit sync & skill detection (PowerShell)
+│   │   └── pre-commit.sh      # Pre-commit sync & skill detection (POSIX)
+│   ├── wiki.ps1               # Wiki CLI launcher (Windows)
+│   ├── wiki.sh                # Wiki CLI launcher (POSIX)
+│   ├── .active-skills.json    # Active workspace skills manifest
+│   ├── setup.ps1              # Workspace initialization script (Windows)
+│   └── setup.sh               # Workspace initialization script (POSIX)
 ├── .agents/
-│   └── skills/                # Antigravity customization discovery root (symlinks gitignored)
-│       └── .gitkeep
-├── wiki/                      # Repository Knowledge Graph & ADRs (Markdown)
+│   └── skills/                # Active Antigravity domain skills
+│       ├── python-ml          # Vectorized computing & ML directives
+│       └── readme-craft       # Documentation architecture directives
+├── wiki/                      # In-house repository knowledge graph
 │   ├── index.md               # Root knowledge graph entrypoint
 │   ├── architecture.md        # High-level architecture specification
 │   └── adr/                   # Architecture Decision Records
-│       └── 001-initial-architecture.md
-├── AGENTS.md                  # Antigravity agent directives & bootstrap protocol
-├── README.example.md          # Scaffolding template README for downstream projects
-├── README.md                  # System documentation for AgenticTemplate
-├── .gitattributes             # Git normalization (LF line endings for scripts)
-├── .gitmodules                # Submodule registration for .agent/.registry
-└── .gitignore                 # Standard ignores for build outputs & dynamic links
+│       ├── 001-initial-architecture.md
+│       └── 002-german-credit-audit-framework.md
+├── AGENTS.md                  # Workspace agent directives & statistical invariants
+├── pyproject.toml             # Project build configuration & dependency manifest
+├── requirements.txt           # Standalone PIP requirements manifest
+└── README.md                  # Project specification & replication guide
 ```
 
 ---
 
-## Quick Start
+## Reproducibility & Quickstart
 
-### 1. Initialize Workspace
-Run the automated setup script from PowerShell (Windows):
+### Prerequisites
+- Python 3.10+ (tested on Python 3.12)
+- Git 2.30+
+- `uv` (recommended) or standard `pip`
+
+### 1. Workspace Initialization & Hook Setup
+Initialize the repository, verify git submodules, and link agent skills:
 
 ```powershell
+# Windows PowerShell
 .\.agent\setup.ps1
 ```
 
-Or from a POSIX shell (Linux/macOS/DevContainers):
 ```bash
+# Linux / macOS
 ./.agent/setup.sh
 ```
 
-The setup script will:
-1. Ensure the workspace is a valid Git repository and set the root directory.
-2. Initialize and pull the `.agent/.registry` submodule from the skills vault.
-3. Configure the Git `.git/hooks/pre-commit` hook to run synchronization on every commit.
-4. Execute an immediate initial synchronization pass into `.agents/skills/`.
+### 2. Dependency Installation
+Using `uv` (recommended):
+```bash
+uv venv
+uv pip install -r requirements.txt
+```
 
-### 2. Fresh Repository Setup & Cleanup
-When scaffolding a new application from this template into a fresh repository:
-1. **Remove Template Disclaimer**:
-   - Permanently delete the `> [!WARNING]` block at the very top of [`README.md`](file:///c:/Users/Bhatn/OneDrive/Desktop/Projects/AgenticTemplate/README.md).
-   - Alternatively, replace [`README.md`](file:///c:/Users/Bhatn/OneDrive/Desktop/Projects/AgenticTemplate/README.md) entirely using [`README.example.md`](file:///c:/Users/Bhatn/OneDrive/Desktop/Projects/AgenticTemplate/README.example.md) as your starter specification, and delete [`README.example.md`](file:///c:/Users/Bhatn/OneDrive/Desktop/Projects/AgenticTemplate/README.example.md).
-2. **Private Skills Vault Check**:
-   - If you do not have access to the private `agent-skills-vault`, either link your own submodule to `.agent/.registry` or remove `.agent/hooks/` and the pre-commit hook triggers.
-3. **Populate Stack & Commit**:
-   - Add your application source code and stack manifest files (e.g., `package.json`, `go.mod`, `Cargo.toml`, `requirements.txt`).
-   - Commit your changes—the pre-commit hook will automatically detect your project stack and symlink matching domain skills into [`.agents/skills/`](file:///c:/Users/Bhatn/OneDrive/Desktop/Projects/AgenticTemplate/.agents/skills).
+Using standard Python `pip`:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### 3. Running Code & Notebook Execution
+All statistical and fairness metrics are fully reproducible with fixed seed `343`:
+```bash
+# Launch Jupyter Notebook
+jupyter notebook
+```
+
+### 4. Code Quality & Linting
+Validate codebase formatting and linting:
+```bash
+uv run ruff check .
+```
 
 ---
 
-## Global Skills vs. Workspace Domain Skills
+## Repository Knowledge Graph
 
-Antigravity operates with a two-tier skill model:
-
-1. **Global Skills** (`~/.gemini/config/skills/`):
-   Always available across all workspaces on the machine (`code-review`, `doc-sync`, `error-discipline`, `git-release`, `incident-triaging`, `security-auditor`, `test-discipline`, `workspace-initializer`, `repo-wiki`). These are never linked into `.agents/skills/`.
-2. **Workspace Domain Skills** (`.agents/skills/`):
-   Language-, framework-, and stack-specific skills (e.g., `go`, `react`, `rust`, `python`) dynamically linked from the vendored `.agent/.registry` based on active repository files.
+This repository maintains an atomic, bidirectional knowledge graph in `wiki/`:
+- **Query notes:** `.\.agent\wiki.ps1 query "fairness"`
+- **Lint links:** `.\.agent\wiki.ps1 lint`
+- **Render graph:** `.\.agent\wiki.ps1 render`

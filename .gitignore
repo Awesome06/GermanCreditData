@@ -38,4 +38,5 @@ secrets/
 *.db-shm
 *.sqlite
 *.sqlite3
-data/
+data/*
+!data/german.data
